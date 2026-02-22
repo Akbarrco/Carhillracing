@@ -1,0 +1,583 @@
+<!DOCTYPE html>  
+<html>  
+<head>  
+<meta charset="UTF-8">  
+<title>Akbarr.co</title>  
+  
+<style>  
+#menu{
+    position:fixed;
+    inset:0;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:linear-gradient(to bottom,#7cd4ff,#e9faff);
+    z-index:999;
+    animation: fadeIn .8s ease forwards;
+}
+
+.menuCard{
+    padding:35px 45px;
+    border-radius:25px;
+    text-align:center;
+    backdrop-filter:blur(15px);
+    background:rgba(255,255,255,0.25);
+    border:1.5px solid rgba(255,255,255,0.4);
+    font-family:Arial;
+    color:white;
+    transform:scale(.7);
+    opacity:0;
+    animation: popUp .8s ease .3s forwards;
+}
+
+.menuCard h1{
+    margin:0 0 10px;
+    transform:translateY(-30px);
+    opacity:0;
+    animation: slideDown .6s ease .6s forwards;
+}
+
+.by, .desc{
+    opacity:0;
+    animation: fadeText .6s ease .9s forwards;
+}
+
+#playBtn{
+    padding:12px 35px;
+    border:none;
+    border-radius:20px;
+    font-size:16px;
+    font-weight:bold;
+    cursor:pointer;
+    background:linear-gradient(45deg,#00ff88,#00ccff);
+    color:#fff;
+    transform:scale(.8);
+    opacity:0;
+    animation: popBtn .5s ease 1.2s forwards;
+    transition:.2s;
+}
+
+#playBtn:active{
+    transform:scale(.95);
+}
+
+/* KEYFRAMES */
+@keyframes fadeIn{
+    from{opacity:0;}
+    to{opacity:1;}
+}
+
+@keyframes popUp{
+    to{
+        transform:scale(1);
+        opacity:1;
+    }
+}
+
+@keyframes slideDown{
+    to{
+        transform:translateY(0);
+        opacity:1;
+    }
+}
+
+@keyframes fadeText{
+    to{opacity:1;}
+}
+
+@keyframes popBtn{
+    to{
+        transform:scale(1);
+        opacity:1;
+    }
+}
+
+/* animasi keluar */
+.menuExit{
+    animation: fadeOut .5s ease forwards;
+}
+
+@keyframes fadeOut{
+    to{
+        opacity:0;
+        transform:scale(1.1);
+    }
+}
+#menu{
+    position:fixed;
+    inset:0;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:linear-gradient(to bottom,#7cd4ff,#e9faff);
+    z-index:999;
+}
+
+.menuCard{
+    padding:35px 45px;
+    border-radius:25px;
+    text-align:center;
+    backdrop-filter:blur(15px);
+    background:rgba(255,255,255,0.25);
+    border:1.5px solid rgba(255,255,255,0.4);
+    font-family:Arial;
+    color:white;
+}
+
+.menuCard h1{
+    margin:0 0 10px;
+}
+
+.by{
+    font-size:14px;
+    opacity:.9;
+}
+
+.desc{
+    font-size:13px;
+    margin:15px 0 25px;
+    opacity:.8;
+}
+
+#playBtn{
+    padding:12px 35px;
+    border:none;
+    border-radius:20px;
+    font-size:16px;
+    font-weight:bold;
+    cursor:pointer;
+    background:linear-gradient(45deg,#00ff88,#00ccff);
+    color:#fff;
+    transition:.2s;
+}
+
+#playBtn:active{
+    transform:scale(.95);
+}
+body{  
+    margin:0;  
+    background:#87ceeb;  
+    overflow:hidden;  
+}  
+canvas{  
+    display:block;  
+}  
+  
+/* tombol */  
+.btnImg{  
+    position:fixed;  
+    bottom:20px;  
+    width:100px;  
+    touch-action:none;  
+    user-select:none;  
+    transition:.08s;  
+}  
+.btnImg:active{  
+    transform:scale(.9);  
+    opacity:.6;  
+}  
+#gas{right:20px;}  
+#brake{left:20px;}  
+  
+/* bensin bar */  
+#fuelBox{  
+    position:fixed;  
+    top:20px;  
+    left:50%;  
+    transform:translateX(-50%);  
+    width:230px;  
+    height:22px;  
+    border-radius:15px;  
+    padding:3px;  
+    backdrop-filter:blur(10px);  
+    background:rgba(255,255,255,0.25);  
+    border:2px solid rgba(255,255,255,0.55);  
+}  
+#fuelBar{  
+    height:100%;  
+    background:linear-gradient(90deg, #00ff66, #33ffaa);  
+    width:100%;  
+    border-radius:12px;  
+}  
+  
+/* UI Glass Card */  
+.infoCard{  
+    position:fixed;  
+    top:70px;  
+    left:20px;  
+    padding:12px 18px;  
+    border-radius:18px;  
+    backdrop-filter:blur(12px);  
+    background:rgba(255,255,255,0.25);  
+    border:1.5px solid rgba(255,255,255,0.4);  
+    font-family:Arial;  
+    color:#fff;  
+    font-size:16px;  
+    font-weight:bold;  
+}  
+#speedCard{  
+    top:70px;  
+    right:20px;  
+    left:auto;  
+}  
+</style>  
+</head>  
+<body>  
+  <div id="menu">
+  <div class="menuCard">
+    <h1>Hill Climb Mini</h1>
+    <p class="by">by Akbar.co</p>
+    <p class="desc">Mohon maaf apabila banyak kekurangan karena saya masih pemula…</p>
+    <button id="playBtn">PLAY</button>
+  </div>
+</div>
+<canvas id="game"></canvas>  
+<audio id="bgm" src="bsound.mp3" loop></audio>
+<audio id="coinSound" src="coin.mp3"></audio>
+  
+<img id="brake" class="btnImg" src="brake.png">  
+<img id="gas" class="btnImg" src="gas.png">  
+  
+<div id="fuelBox"><div id="fuelBar"></div></div>  
+  
+<div id="coinCard" class="infoCard">COIN: 0</div>  
+<div id="distCard" class="infoCard" style="top:120px;">0 m</div>  
+<div id="speedCard" class="infoCard">0 KM/H</div>  
+  
+<script>  
+let coins=[];  
+for(let i=200;i<30000;i+=400){  
+    coins.push({x:i,col:false});  
+}  
+  
+let trees=[];  
+for(let i=300;i<30000;i+=600){  
+    trees.push({x:i});  
+}  
+  
+let sun = { x:800, y:120, radius:60 };  
+  
+let clouds=[];  
+for(let i=0;i<10;i++){  
+    clouds.push({  
+        x:Math.random()*3000,  
+        y:Math.random()*200+50,  
+        size:Math.random()*40+40,  
+        speed:Math.random()*0.3+0.1  
+    });  
+}  
+  
+let score=0;  
+let distance=0;  
+let speedKM=0;  
+  
+const canvas=document.getElementById("game");  
+const ctx=canvas.getContext("2d");  
+canvas.width=innerWidth;  
+canvas.height=innerHeight;  
+  
+let gas=false, brake=false;  
+  
+document.getElementById("gas").ontouchstart=e=>{e.preventDefault();gas=true;}  
+document.getElementById("gas").ontouchend=()=>gas=false;  
+document.getElementById("brake").ontouchstart=e=>{e.preventDefault();brake=true;}  
+document.getElementById("brake").ontouchend=()=>brake=false;  
+  
+const carImg=new Image();  
+const wheelImg=new Image();  
+const fuelImg=new Image();  
+carImg.src="car.png";  
+wheelImg.src="wheel.png";  
+fuelImg.src="fuel.png";  
+  
+/*======= TERRAIN =======*/  
+const terrain=[];  
+const step=4;  
+for(let x=0;x<30000;x+=step){  
+    terrain.push({  
+        x:x,  
+        y:420+  
+           Math.sin(x*.01)*80+  
+           Math.sin(x*.03)*30+  
+           Math.sin(x*.005)*120  
+    });  
+}  
+  
+function ground(x){  
+    let i=Math.floor(x/step);  
+    return terrain[i]?terrain[i].y:500;  
+}  
+  
+/*======= MOBIL =======*/  
+let car={ x:100, speed:0, wheelRot:0 };  
+let frontScale=.12, rearScale=.12, carScale=.12;  
+  
+let fuel=100;  
+const fuelBar=document.getElementById("fuelBar");  
+  
+let fuels=[];  
+for(let i=500;i<20000;i+=800){  
+    fuels.push({x:i,y:0,taken:false});  
+}  
+  
+let cameraX=0;  
+  
+function update(){  
+    if(gas && fuel>0){  
+        car.speed+=.10;  
+        fuel-=.08;  
+    }  
+    if(brake) car.speed*=.9;  
+  
+    car.speed*=.990;  
+    car.x+=car.speed;  
+    car.wheelRot+=car.speed*.12;  
+  
+    fuel=Math.max(0,fuel);  
+    fuelBar.style.width=fuel+"%";  
+  
+    fuels.forEach(f=>{  
+        if(!f.taken && Math.abs(car.x-f.x)<40){  
+            fuel=100;  
+            f.taken=true;  
+        }  
+    });  
+  
+    cameraX=car.x-150;  
+}  
+  
+function draw(){  
+  
+    ctx.clearRect(0,0,canvas.width,canvas.height);  
+  
+    /* LANGIT */  
+    let sky = ctx.createLinearGradient(0,0,0,canvas.height);  
+    sky.addColorStop(0,"#7cd4ff");  
+    sky.addColorStop(0.5,"#a7e3ff");  
+    sky.addColorStop(1,"#e9faff");  
+    ctx.fillStyle = sky;  
+    ctx.fillRect(0,0,canvas.width,canvas.height);  
+  
+    /* MATAHARI */  
+    let sunX = sun.x - cameraX*0.1;  
+    let sunY = sun.y;  
+  
+    let glow = ctx.createRadialGradient(sunX,sunY,0,sunX,sunY,120);  
+    glow.addColorStop(0,"rgba(255,255,180,1)");  
+    glow.addColorStop(1,"rgba(255,180,0,0)");  
+    ctx.fillStyle=glow;  
+    ctx.beginPath();  
+    ctx.arc(sunX,sunY,120,0,Math.PI*2);  
+    ctx.fill();  
+  
+    ctx.fillStyle="yellow";  
+    ctx.beginPath();  
+    ctx.arc(sunX,sunY,45,0,Math.PI*2);  
+    ctx.fill();  
+  
+    /* AWAN */  
+    clouds.forEach(c=>{  
+        let cx = c.x - cameraX*0.3;  
+        ctx.fillStyle="white";  
+        ctx.beginPath();  
+        ctx.arc(cx, c.y, c.size, 0, Math.PI*2);  
+        ctx.fill();  
+        ctx.beginPath();  
+        ctx.arc(cx + c.size*0.8, c.y, c.size*0.8, 0, Math.PI*2);  
+        ctx.fill();  
+        ctx.beginPath();  
+        ctx.arc(cx - c.size*0.8, c.y, c.size*0.8, 0, Math.PI*2);  
+        ctx.fill();  
+    });  
+  
+    /* TANAH */  
+    ctx.beginPath();  
+    ctx.moveTo(0, canvas.height);  
+    for(let i=0;i<canvas.width;i++){  
+        let gy = ground(i + cameraX);  
+        ctx.lineTo(i, gy);  
+    }  
+    ctx.lineTo(canvas.width, canvas.height);  
+    ctx.closePath();  
+    ctx.fillStyle = "#8b5a2b";  
+    ctx.fill();  
+  
+    /* RUMPUT */  
+    for(let i=0;i<canvas.width;i++){  
+        let gy = ground(i + cameraX);  
+        ctx.fillStyle="#3cb371";  
+        ctx.fillRect(i, gy-8, 1, 8);  
+    }  
+  
+    /* POHON */  
+    trees.forEach(t=>{  
+        let tx = t.x - cameraX;  
+        let ty = ground(t.x);  
+        ctx.fillStyle="#8b5a2b";  
+        ctx.fillRect(tx-6, ty-50, 12, 50);  
+        ctx.fillStyle="green";  
+        ctx.beginPath();  
+        ctx.arc(tx, ty-70, 28, 0, Math.PI*2);  
+        ctx.fill();  
+    });  
+  
+    /* ITEM BENSIN */  
+    fuels.forEach(f=>{  
+        if(!f.taken){  
+            let gx=f.x-cameraX;  
+            let gy=ground(f.x)-90;  
+            ctx.drawImage(fuelImg,gx-20,gy,80,80);  
+        }  
+    });  
+  
+    /* COIN */  
+    coins.forEach(c=>{  
+        if(!c.col){  
+            let cy = ground(c.x)-80;  
+            ctx.beginPath();  
+            ctx.arc(c.x-cameraX, cy, 12, 0, Math.PI*2);  
+            ctx.fillStyle="gold";  
+            ctx.fill();  
+        }  
+    });  
+  
+    /* ======= MOBIL FIX RODA ======= */  
+let rearOffset = 73;  // jarak roda belakang dari center body  
+let frontOffset = 70; // jarak roda depan dari center body  
+let wheelHeight = 25; // tinggi roda relatif ke body  
+  
+// posisi roda di dunia  
+let rearX = car.x - rearOffset;  
+let frontX = car.x + frontOffset;  
+let rearY = ground(rearX);  
+let frontY = ground(frontX);  
+  
+// sudut body berdasarkan kemiringan roda  
+let angle = Math.atan2(frontY - rearY, rearOffset + frontOffset);  
+  
+// posisi body di layar  
+let bodyX = car.x - cameraX;  
+let bodyY = ((rearY + frontY)/2) - 45; // offset body dari roda  
+  
+ctx.save();  
+ctx.translate(bodyX, bodyY);  
+ctx.rotate(angle);  
+  
+// gambar body  
+let cw = carImg.width * carScale;  
+let ch = carImg.height * carScale;  
+ctx.drawImage(carImg, -cw/2, -ch/2, cw, ch);  
+  
+// === RODA BELAKANG ===  
+ctx.save();  
+ctx.translate(-rearOffset, wheelHeight);  
+ctx.rotate(car.wheelRot);  
+ctx.drawImage(  
+    wheelImg,  
+    -wheelImg.width*rearScale/2,  
+    -wheelImg.height*rearScale/2,  
+    wheelImg.width*rearScale,  
+    wheelImg.height*rearScale  
+);  
+ctx.restore();  
+  
+// === RODA DEPAN ===  
+ctx.save();  
+ctx.translate(frontOffset, wheelHeight);  
+ctx.rotate(car.wheelRot);  
+ctx.drawImage(  
+    wheelImg,  
+    -wheelImg.width*frontScale/2,  
+    -wheelImg.height*frontScale/2,  
+    wheelImg.width*frontScale,  
+    wheelImg.height*frontScale  
+);  
+ctx.restore();  
+  
+ctx.restore();  
+}  
+  
+function loop(){  
+    fuel -= Math.abs(car.speed)*0.02;  
+    if(fuel <= 0){  
+        car.speed = 0;  
+        alert("BENSIN HABIS!");  
+        location.reload();  
+    }  
+  
+    coins.forEach(c=>{  
+        if(!c.col && Math.abs(c.x-car.x)<25){  
+            c.col=true;  
+            score++;  
+        }  
+    });  
+  
+    speedKM = Math.abs(car.speed*3).toFixed(0);  
+    update();  
+    draw();  
+    requestAnimationFrame(loop);  
+  
+    distance = Math.floor(car.x / 10);  
+  
+    document.getElementById("coinCard").innerText = "COIN: "+score;  
+    document.getElementById("distCard").innerText = distance+" m";  
+    document.getElementById("speedCard").innerText = speedKM+" KM/H";  
+  
+    clouds.forEach(c=>{  
+        c.x += c.speed;  
+    });  
+}  
+let gameStarted = false;
+
+document.getElementById("playBtn").onclick = function(){
+    document.getElementById("menu").style.display = "none";
+
+    let bgm = document.getElementById("bgm");
+    bgm.volume = 0.5; // bisa 0.1 - 1.0
+    bgm.play();
+
+    gameStarted = true;
+    loop();
+}
+
+function loop(){
+    if(!gameStarted) return;
+
+    fuel -= Math.abs(car.speed)*0.02;
+    if(fuel <= 0){
+        car.speed = 0;
+        alert("BENSIN HABIS!");
+        location.reload();
+    }
+
+    coins.forEach(c=>{
+    if(!c.col && Math.abs(c.x-car.x)<25){
+        c.col=true;
+        score++;
+
+        let sound = document.getElementById("coinSound").cloneNode();
+        sound.volume = 0.6;
+        sound.play();
+    }
+});
+
+    speedKM = Math.abs(car.speed*3).toFixed(0);
+    update();
+    draw();
+    requestAnimationFrame(loop);
+
+    distance = Math.floor(car.x / 10);
+
+    document.getElementById("coinCard").innerText = "COIN: "+score;
+    document.getElementById("distCard").innerText = distance+" m";
+    document.getElementById("speedCard").innerText = speedKM+" KM/H";
+
+    clouds.forEach(c=>{
+        c.x += c.speed;
+    });
+}
+  
+loop();  
+</script>  
+</body>  
+</html>
